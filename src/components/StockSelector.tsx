@@ -1,28 +1,25 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { companies } from "@/lib/stock-data";
 
 export function StockSelector() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const currentTicker = searchParams.get("ticker") || "NVDA";
+  const currentTicker = searchParams.get("ticker") || companies[0].ticker;
+  const [startDate, setStartDate] = React.useState<string>(
+    searchParams.get("startDate") || ""
+  );
+  const [endDate, setEndDate] = React.useState<string>(
+    searchParams.get("endDate") || ""
+  );
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [selectedTicker, setSelectedTicker] = React.useState(currentTicker);
-
-  const [startDate, setStartDate] = React.useState<string>("");
-  const [endDate, setEndDate] = React.useState<string>("");
-
-  const handleStockChange = (value: string) => {
+  const handleStockChange = (ticker: string) => {
     const params = new URLSearchParams(searchParams);
-    params.set("ticker", value);
+    params.set("ticker", ticker);
     router.push(`/?${params.toString()}`);
-    setSelectedTicker(value);
-    setIsOpen(false);
   };
 
   const handleDateChange = (start: string, end: string) => {
@@ -33,44 +30,37 @@ export function StockSelector() {
   };
 
   return (
-    <div className='relative w-full flex justify-end'>
-      <button 
-        className='w-[300px] border border-gray-300 rounded p-2 text-left' 
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {selectedTicker} <span className='float-right'>▼</span>
-      </button>
-      <div>
-        <input 
-          type="date" 
-          value={startDate} 
-          onChange={(e) => {
-            setStartDate(e.target.value);
-            handleDateChange(e.target.value, endDate);
-          }} 
+    <div className='flex flex-col gap-4 text-dark'>
+      <select
+        value={currentTicker}
+        onChange={(e) => handleStockChange(e.target.value)}
+        className='p-2 border bg-gray-100 text-gray-800 rounded'>
+        {companies.map((company) => (
+          <option key={company.ticker} value={company.ticker}>
+            {company.name} ({company.ticker})
+          </option>
+        ))}
+      </select>
+
+      <div className='flex gap-4'>
+        <input
+          type='date'
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className='p-2 bg-gray-100 text-gray-800 border rounded'
         />
-        <input 
-          type="date" 
-          value={endDate} 
-          onChange={(e) => {
-            setEndDate(e.target.value);
-            handleDateChange(startDate, e.target.value);
-          }} 
+        <input
+          type='date'
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className='p-2 border bg-gray-100 text-gray-800 rounded'
         />
+        <button
+          onClick={() => handleDateChange(startDate, endDate)}
+          className='p-2 bg-blue-500 text-white rounded'>
+          Apply
+        </button>
       </div>
-      {isOpen && (
-        <div className='absolute z-10 w-[300px] bg-[grey] border border-gray-300 rounded mt-1'>
-          {companies.map((company) => (
-            <button 
-              key={company.ticker} 
-              className='w-full text-left p-2 hover:bg-gray-100' 
-              onClick={() => handleStockChange(company.ticker)}
-            >
-              {company.name}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

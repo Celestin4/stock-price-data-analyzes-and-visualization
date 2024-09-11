@@ -1,3 +1,5 @@
+import { StockData } from "@/types/types";
+
 const BASE_URL = `https://api.polygon.io/v2/aggs/ticker/TICKER/range/1/day/FROM_DATE/TO_DATE?adjusted=true&sort=asc&apiKey=${process.env.POLYGON_API_KEY}`;
 
 export const getAugmentedFetchUrl = (
@@ -16,32 +18,23 @@ const formatDate = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
-const DAYS_AGO = 100;
-
-const getEndpoint = (ticker: string): string => {
-  const today = new Date();
-  const last7Days = new Date(today);
-  last7Days.setDate(today.getDate() - DAYS_AGO);
-
-  const from = formatDate(last7Days);
-  const to = formatDate(today);
-
-  return getAugmentedFetchUrl(ticker, from, to);
-};
-
-export interface StockData {
-  date: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-}
 
 export async function getStockData(
-  ticker: string = "NVDA"
+  ticker: string = "NVDA",
+  startDate?: string,
+  endDate?: string 
 ): Promise<StockData[]> {
-  const res = await fetch(getEndpoint(ticker), {
+  const today = new Date();
+  
+  const last7Days = new Date(today);
+  last7Days.setDate(today.getDate() - 100);
+  
+  const from = startDate || formatDate(last7Days);
+  const to = endDate || formatDate(today);
+
+  const fetchUrl = getAugmentedFetchUrl(ticker, from, to);
+
+  const res = await fetch(fetchUrl, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -56,8 +49,9 @@ export async function getStockData(
     throw new Error("Failed to fetch stock data");
   }
 
-  const stockDataArray: StockData[] = data.results.map((item: any) => ({
-    date: new Date(item.t).toISOString().split("T")[0], // Convert timestamp to YYYY-MM-DD
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const stockDataArray: StockData[] = data.results.map((item:any) => ({
+    date: new Date(item.t).toISOString().split("T")[0],
     open: item.o,
     high: item.h,
     low: item.l,
