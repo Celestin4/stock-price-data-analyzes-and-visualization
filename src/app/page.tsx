@@ -1,10 +1,10 @@
-import { getStockData } from "@/lib/get-stock-data";
+import { getStockData } from "@/server-actions/get-stock-data";
 import { InteractiveStockChart } from "@/components/InteractiveStockChart";
 import { StockSelector } from "@/components/StockSelector";
 import { Suspense } from "react";
 import { companies } from "@/lib/stock-data";
 
-export default function Home({
+export default async function Home({
   searchParams,
 }: {
   searchParams: { ticker?: string; startDate?: string; endDate?: string };
@@ -13,8 +13,8 @@ export default function Home({
   const startDate = searchParams.startDate || "";
   const endDate = searchParams.endDate || "";
 
-  // Pass startDate and endDate to the getStockData function
-  const stockData = getStockData(ticker, startDate, endDate);
+  // Pass ticker and date range to the getStockData function
+  const stockData = await getStockData(ticker, startDate, endDate);
 
   return (
     <div className='min-h-screen pt-6 pb-12 lg:px-12 px-3'>

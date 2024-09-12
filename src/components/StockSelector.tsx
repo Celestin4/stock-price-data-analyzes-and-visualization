@@ -30,7 +30,7 @@ export function StockSelector() {
   };
 
   return (
-    <div className='flex flex-col gap-4 text-dark'>
+    <div className='flex justify-between gap-5 text-dark'>
       <select
         value={currentTicker}
         onChange={(e) => handleStockChange(e.target.value)}
