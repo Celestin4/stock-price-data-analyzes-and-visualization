@@ -13,7 +13,7 @@ import {
 import { companies } from "@/lib/companies";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { InteractiveStockChartProps } from "@/types/types";
-import { calculatePercentageChange } from "@/server-actions/calculate-returns";// Import the server action
+import { calculateReturns } from "@/server-actions/calculateReturns";// Import the server action
 
 const chartConfig = {
   high: { label: "High", color: "#FF5733" },
@@ -59,9 +59,9 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
   useEffect(() => {
     async function fetchPercentageChange() {
       try {
-        const change = await calculatePercentageChange(formattedData);
-        setPercentageChange(change);
-        setIsTrendingUp(change > 0);
+        const dailyReturn = await calculateReturns(formattedData);
+        setPercentageChange(dailyReturn);
+        setIsTrendingUp(dailyReturn > 0);
       } catch (error) {
         console.error("Error calculating percentage change:", error);
       }
@@ -93,7 +93,7 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
           />
           Table
         </label>
-        {displayType === 'chart' && ( // Add checkbox for grid visibility and color picker
+        {displayType === 'chart' && ( 
           <div>
             <label>
               <input
@@ -115,79 +115,77 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
         )}
       </div>
       <div className='p-4'>
-        {displayType === 'chart' ? (
-          <ResponsiveContainer width='100%' height={400}>
-            <LineChart data={formattedData}>
-              {showGrid && <CartesianGrid stroke={gridColor} strokeDasharray='3 3' />}
-              <XAxis
-                dataKey='date'
-                tickFormatter={(value) => new Date(value).toLocaleDateString()}
-              />
-              <YAxis domain={[minValue * 0.9, maxValue * 1.1]} />
-              <Tooltip />
-              <Line
-                type='monotone'
-                dataKey='high'
-                dot={false}
-                stroke={chartConfig.high.color}
-                name={chartConfig.high.label}
-              />
-              <Line
-                type='monotone'
-                dataKey='close'
-                dot={false}
-                stroke={chartConfig.close.color}
-                name={chartConfig.close.label}
-              />
-              <Line
-                type='monotone'
-                dataKey='low'
-                dot={false}
-                stroke={chartConfig.low.color}
-                name={chartConfig.low.label}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        ) : (
-          <table className='w-full'>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>High</th>
-                <th>Close</th>
-                <th>Low</th>
-              </tr>
-            </thead>
-            <tbody>
-              {formattedData.map((item) => (
-                <tr key={item.date}>
-                  <td>{new Date(item.date).toLocaleDateString()}</td>
-                  <td>{item.high}</td>
-                  <td>{item.close}</td>
-                  <td>{item.low}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-      <div className='p-4'>
         <p>
           {isTrendingUp ? (
             <>
-              Trending up by{" "}
+              Increased by{" "}
               <span className='text-green-500'>{percentageChange.toFixed(2)}%</span>{" "}
-              this period <TrendingUp />
+              today <TrendingUp />
             </>
           ) : (
             <>
-              Trending down by{" "}
+              Decreased by{" "}
               <span className='text-red-500'>{percentageChange.toFixed(2)}%</span>{" "}
-              this period <TrendingDown />
+              today <TrendingDown />
             </>
           )}
         </p>
       </div>
+      {displayType === 'chart' ? (
+        <ResponsiveContainer width='100%' height={400}>
+          <LineChart data={formattedData}>
+            {showGrid && <CartesianGrid stroke={gridColor} strokeDasharray='3 3' />}
+            <XAxis
+              dataKey='date'
+              tickFormatter={(value) => new Date(value).toLocaleDateString()}
+            />
+            <YAxis domain={[minValue * 0.9, maxValue * 1.1]} />
+            <Tooltip />
+            <Line
+              type='monotone'
+              dataKey='high'
+              dot={false}
+              stroke={chartConfig.high.color}
+              name={chartConfig.high.label}
+            />
+            <Line
+              type='monotone'
+              dataKey='close'
+              dot={false}
+              stroke={chartConfig.close.color}
+              name={chartConfig.close.label}
+            />
+            <Line
+              type='monotone'
+              dataKey='low'
+              dot={false}
+              stroke={chartConfig.low.color}
+              name={chartConfig.low.label}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      ) : (
+        <table className='w-full'>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>High</th>
+              <th>Close</th>
+              <th>Low</th>
+            </tr>
+          </thead>
+          <tbody>
+            {formattedData.map((item) => (
+              <tr key={item.date}>
+                <td>{new Date(item.date).toLocaleDateString()}</td>
+                <td>{item.high}</td>
+                <td>{item.close}</td>
+                <td>{item.low}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

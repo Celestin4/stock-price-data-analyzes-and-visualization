@@ -1,5 +1,5 @@
-import { getStockData } from "@/server-actions/get-stock-data";
-import { InteractiveStockChart } from "@/components/InteractiveStockChart";
+import { getStockData } from "@/server-actions/getStockData";
+import { InteractiveStockChart } from "@/components/StockVisualisation";
 import { StockSelector } from "@/components/StockSelector";
 import { companies } from "@/lib/companies";
 

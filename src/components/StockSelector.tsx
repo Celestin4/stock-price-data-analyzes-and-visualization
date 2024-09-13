@@ -49,12 +49,16 @@ export function StockSelector() {
           type='date'
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
+          min='2023-01-01'
+          max='2023-06-04'
           className='p-2 bg-gray-100 text-gray-800 border rounded'
         />
         <input
           type='date'
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
+          min='2023-01-01'
+          max='2023-06-04'
           className='p-2 border bg-gray-100 text-gray-800 rounded'
         />
         <button
