@@ -1,9 +1,6 @@
 'use server'
 
-interface StockData {
-    date: string;
-    close: number;
-  }
+import { StockData } from "@/types/types";
   
   export async function calculatePercentageChange(stockData: StockData[]) {
     if (stockData.length === 0) return 0;
@@ -17,9 +14,9 @@ interface StockData {
       .sort((a, b) => a.dateTime - b.dateTime);
   
     // Check if there are at least two valid entries
-    if (formattedData.length < 2) return 0; // or handle as needed
+    if (formattedData.length < 2) return 0;
   
-    const firstValue = formattedData[formattedData.length - 2].close;
+    const secondLastValue = formattedData[formattedData.length - 2].close;
     const lastValue = formattedData[formattedData.length - 1].close;
-    return ((lastValue - firstValue) / firstValue) * 100;
+    return ((lastValue - secondLastValue) / secondLastValue) * 100;
   }
