@@ -7,7 +7,11 @@ import { StockData } from '../types/types';
 
 const CSV_FILE_PATH = path.join(process.cwd(), 'public/data/StockPrices.csv');
 
-export async function getStockData(ticker?: string, startDate?: string, endDate?: string): Promise<StockData[]> {
+export async function getStockData(
+  ticker?: string, 
+  startDate?: string, 
+  endDate?: string
+): Promise<{ stockData: StockData[], filteredData: StockData[] }> {
   try {
     const fileContent = await fs.readFile(CSV_FILE_PATH, 'utf-8');
     
@@ -37,7 +41,9 @@ export async function getStockData(ticker?: string, startDate?: string, endDate?
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
 
-    if (!ticker && !start && !end) return stockData;
+    if (!ticker && !start && !end) {
+      return { stockData, filteredData: stockData };
+    }
 
     const filteredData = stockData.filter((item) => {
       const itemDate = new Date(item.date);
@@ -47,8 +53,14 @@ export async function getStockData(ticker?: string, startDate?: string, endDate?
       return tickerMatches && startMatches && endMatches;
     });
 
-    return filteredData;
+    // Apply date range to stockData as well
+    const dateFilteredStockData = stockData.filter((item) => {
+      const itemDate = new Date(item.date);
+      return (!start || itemDate >= start) && (!end || itemDate <= end);
+    });
+
+    return { stockData: dateFilteredStockData, filteredData };
   } catch (error) {
-    return [];
+    return { stockData: [], filteredData: [] };
   }
 }

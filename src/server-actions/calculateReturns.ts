@@ -19,10 +19,7 @@ import { StockData } from "@/types/types";
     const secondLastValue = formattedData[formattedData.length - 2].close;
     const lastValue = formattedData[formattedData.length - 1].close;
   
-    // Ensure values are numbers before calculation
-    if (typeof secondLastValue !== 'number' || typeof lastValue !== 'number') {
-        throw new Error("Invalid stock data: 'close' values must be numbers.");
-    }
+  
   
     return ((lastValue - secondLastValue) / secondLastValue) * 100;
   }
