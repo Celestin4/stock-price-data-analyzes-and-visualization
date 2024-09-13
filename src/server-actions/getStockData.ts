@@ -1,4 +1,4 @@
-'use server'
+'use server';
 
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -13,6 +13,7 @@ export async function getStockData(
   endDate?: string
 ): Promise<{ stockData: StockData[], filteredData: StockData[] }> {
   try {
+    // Read and parse CSV file
     const fileContent = await fs.readFile(CSV_FILE_PATH, 'utf-8');
     
     const parsedData = Papa.parse<{
@@ -28,6 +29,7 @@ export async function getStockData(
       skipEmptyLines: true,
     }).data;
 
+    // Map parsed data to StockData format
     const stockData = parsedData.map(({ Date, open, high, low, close, volume, ticker }) => ({
       date: Date,
       open: parseFloat(open),
@@ -38,28 +40,23 @@ export async function getStockData(
       ticker
     }));
 
+
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
 
-    if (!ticker && !start && !end) {
-      return { stockData, filteredData: stockData };
-    }
-
-    const filteredData = stockData.filter((item) => {
-      const itemDate = new Date(item.date);
-      const tickerMatches = ticker ? item.ticker === ticker : true;
-      const startMatches = start ? itemDate >= start : true;
-      const endMatches = end ? itemDate <= end : true;
-      return tickerMatches && startMatches && endMatches;
-    });
-
-    // Apply date range to stockData as well
-    const dateFilteredStockData = stockData.filter((item) => {
+    // Filter all stock data based on date range
+    const filteredStockData = stockData.filter((item) => {
       const itemDate = new Date(item.date);
       return (!start || itemDate >= start) && (!end || itemDate <= end);
     });
 
-    return { stockData: dateFilteredStockData, filteredData };
+    // Filter data for specified ticker 
+    const filteredData = filteredStockData.filter((item) => {
+      const tickerMatches = !ticker || item.ticker === ticker;
+      return tickerMatches ;
+    });
+
+    return { stockData: filteredStockData, filteredData };
   } catch (error) {
     return { stockData: [], filteredData: [] };
   }

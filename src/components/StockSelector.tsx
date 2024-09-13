@@ -1,35 +1,18 @@
 "use client";
 
-import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useStockSelector } from "@/hooks/useStockSelector";
 import { companies } from "@/lib/companies";
 
 export function StockSelector() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const currentTicker = searchParams.get("ticker") || companies[0].ticker;
-  const [startDate, setStartDate] = React.useState<string>(
-    searchParams.get("startDate") || ""
-  );
-  const [endDate, setEndDate] = React.useState<string>(
-    searchParams.get("endDate") || ""
-  );
-
-  const handleStockChange = (ticker: string) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("ticker", ticker);
-    setStartDate(""); // Reset start date
-    setEndDate("");   // Reset end date
-    router.push(`/?${params.toString()}`);
-  };
-
-  const handleDateChange = (start: string, end: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (start) params.set("startDate", start);
-    if (end) params.set("endDate", end);
-    router.push(`/?${params.toString()}`);
-  };
+  const {
+    currentTicker,
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+    handleStockChange,
+    handleDateChange,
+  } = useStockSelector();
 
   return (
     <div className='flex justify-between gap-5 text-dark'>
@@ -48,7 +31,10 @@ export function StockSelector() {
         <input
           type='date'
           value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
+          onChange={(e) => {
+            setStartDate(e.target.value);
+            handleDateChange(e.target.value, endDate);
+          }}
           min='2023-01-01'
           max='2023-06-04'
           className='p-2 bg-gray-100 text-gray-800 border rounded'
@@ -56,16 +42,14 @@ export function StockSelector() {
         <input
           type='date'
           value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          min='2023-01-01'
+          onChange={(e) => {
+            setEndDate(e.target.value);
+            handleDateChange(startDate, e.target.value);
+          }}
+          min={startDate || '2023-01-01'}
           max='2023-06-04'
           className='p-2 border bg-gray-100 text-gray-800 rounded'
         />
-        <button
-          onClick={() => handleDateChange(startDate, endDate)}
-          className='p-2 bg-blue-500 text-white rounded'>
-          Apply
-        </button>
       </div>
     </div>
   );
