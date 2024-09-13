@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { companies } from "@/lib/stock-data";
+import { companies } from "@/lib/companies";
 
 export function StockSelector() {
   const router = useRouter();
@@ -19,6 +19,8 @@ export function StockSelector() {
   const handleStockChange = (ticker: string) => {
     const params = new URLSearchParams(searchParams);
     params.set("ticker", ticker);
+    setStartDate(""); // Reset start date
+    setEndDate("");   // Reset end date
     router.push(`/?${params.toString()}`);
   };
 

@@ -16,8 +16,10 @@ interface StockData {
       .filter((item) => !isNaN(item.dateTime))
       .sort((a, b) => a.dateTime - b.dateTime);
   
-    const firstValue = formattedData[formattedData.length - 1].close;
-    const lastValue = formattedData[formattedData.length - 2].close;
+    // Check if there are at least two valid entries
+    if (formattedData.length < 2) return 0; // or handle as needed
+  
+    const firstValue = formattedData[formattedData.length - 2].close;
+    const lastValue = formattedData[formattedData.length - 1].close;
     return ((lastValue - firstValue) / firstValue) * 100;
   }
-  

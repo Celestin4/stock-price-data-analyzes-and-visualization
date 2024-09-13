@@ -10,10 +10,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { companies } from "@/lib/stock-data";
+import { companies } from "@/lib/companies";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { InteractiveStockChartProps } from "@/types/types";
-import { calculatePercentageChange } from "@/server-actions/calculate-eturns";// Import the server action
+import { calculatePercentageChange } from "@/server-actions/calculate-returns";// Import the server action
 
 const chartConfig = {
   high: { label: "High", color: "#FF5733" },
