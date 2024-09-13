@@ -1,18 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server'
 
 import { promises as fs } from 'fs';
 import path from 'path';
 import Papa from 'papaparse';
-
-interface StockData {
-  date: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-  ticker: string;
-}
+import {StockData} from '../types/types'
 
 export async function getStockData(ticker?: string, startDate?: string, endDate?: string): Promise<StockData[]> {
   const filePath = path.join(process.cwd(), 'public/data/StockPrices.csv');

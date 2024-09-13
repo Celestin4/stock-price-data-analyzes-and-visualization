@@ -13,7 +13,6 @@ export default async function Home({
   const startDate = searchParams.startDate || "";
   const endDate = searchParams.endDate || "";
 
-  // Pass ticker and date range to the getStockData function
   const stockData = await getStockData(ticker, startDate, endDate);
 
   return (
@@ -26,7 +25,7 @@ export default async function Home({
               Fetching price…
             </span>
           }>
-          <InteractiveStockChart chartData={stockData} ticker={ticker} />
+          <InteractiveStockChart chartData={await stockData} ticker={ticker} />
         </Suspense>
       </main>
     </div>

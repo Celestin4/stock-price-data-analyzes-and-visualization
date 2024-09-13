@@ -1,7 +1,4 @@
-interface Company {
-  name: string;
-  ticker: string;
-}
+import { Company } from "@/types/types";
 
 export const companies: Company[] = [
   { name: "American Airlines Group Inc.", ticker: "AAL" },

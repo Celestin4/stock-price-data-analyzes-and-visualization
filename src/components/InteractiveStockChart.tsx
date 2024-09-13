@@ -93,6 +93,26 @@ export const InteractiveStockChart: FC<InteractiveStockChartProps> = ({
           />
           Table
         </label>
+        {displayType === 'chart' && ( // Add checkbox for grid visibility and color picker
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                checked={showGrid}
+                onChange={() => setShowGrid(!showGrid)}
+              />
+              Show Grid
+            </label>
+            <label>
+              Grid Color:
+              <input
+                type="color"
+                value={gridColor}
+                onChange={(e) => setGridColor(e.target.value)}
+              />
+            </label>
+          </div>
+        )}
       </div>
       <div className='p-4'>
         {displayType === 'chart' ? (
