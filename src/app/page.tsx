@@ -1,8 +1,8 @@
 import { getStockData } from "@/server-actions/getStockData";
-import { StockChart } from "@/components/StockVisualisation";
+import { StockChart } from "@/components/StockChart";
 import { StockSelector } from "@/components/StockSelector";
 import { companies } from "@/lib/companies";
-import StockComparison from "@/components/StockComparison";
+import StockComparison from "@/components/StockComparisonTable";
 
 export default async function Home({
   searchParams,

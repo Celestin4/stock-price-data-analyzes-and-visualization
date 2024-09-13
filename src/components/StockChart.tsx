@@ -28,6 +28,7 @@ export const StockChart: FC<InteractiveStockChartProps> = ({
     company,
   } = useStockChart({ stockData, ticker });
 
+
   return (
     <div className='w-full max-w-4xl mx-auto border rounded-lg shadow-lg'>
       <div className='p-4 border-b'>
@@ -88,7 +89,7 @@ export const StockChart: FC<InteractiveStockChartProps> = ({
                 tickFormatter={(value) => new Date(value).toLocaleDateString()}
                 className='text-gray-600'
               />
-              <YAxis domain={[minValue * 0.9, maxValue * 1.1]} className='text-gray-600' />
+              <YAxis domain={[Math.floor(minValue * 0.9), Math.ceil(maxValue * 1.1)]} className='text-gray-600' />
               <Tooltip />
               <Line
                 type='monotone'

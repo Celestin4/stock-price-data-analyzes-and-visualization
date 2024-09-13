@@ -31,14 +31,14 @@ const StockComparison: React.FC<StockComparisonProps> = ({ data }) => {
             >
               <td className="px-4 py-3 text-gray-700">{ticker}</td>
               <td className="px-4 py-3 text-gray-700">
-                ${latestClosePrices[ticker].toFixed(2)}
+                {latestClosePrices[ticker] ? `$${latestClosePrices[ticker].toFixed(2)}` : 'N/A'}
               </td>
               <td
                 className={`px-4 py-3 text-gray-700 ${
-                  parseFloat(returns[ticker]) >= 0 ? 'text-green-500' : 'text-red-500'
+                  returns[ticker] && !isNaN(parseFloat(returns[ticker])) && parseFloat(returns[ticker]) >= 0 ? 'text-green-500' : 'text-red-500'
                 }`}
               >
-                {returns[ticker] || 'N/A'}
+                {returns[ticker] && !isNaN(parseFloat(returns[ticker])) ? returns[ticker] : ''}
               </td>
             </tr>
           ))}
